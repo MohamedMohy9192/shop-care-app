@@ -5,14 +5,17 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.androideradev.www.shopcare.getOrAwaitValue
+import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Assert.*
 
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class ShoppingDaoTest {
@@ -48,12 +51,26 @@ class ShoppingDaoTest {
             amount = 1,
             price = 1000f,
             imageUrl = "www.example.com"
-        )gi
+        )
         dao.insertShoppingItem(shoppingItem)
-        dao.getAllShoppingItems().observeForever { shoppingItems: List<ShoppingItem> ->
-            assertTrue(shoppingItems.contains(shoppingItem))
 
-        }
+        val shoppingItems = dao.getAllShoppingItems().getOrAwaitValue()
+        assertThat(shoppingItems).contains(shoppingItem)
+    }
+
+    fun deleteShoppingItem() = runTest {
+        val shoppingItem = ShoppingItem(
+            id = 1,
+            name = "Phone",
+            amount = 1,
+            price = 1000f,
+            imageUrl = "www.example.com"
+        )
+        dao.insertShoppingItem(shoppingItem)
+        dao.deleteShoppingItem(shoppingItem)
+
+        val shoppingItems = dao.getAllShoppingItems().getOrAwaitValue()
+        assertThat(shoppingItems).doesNotContain(shoppingItem)
     }
 
 
