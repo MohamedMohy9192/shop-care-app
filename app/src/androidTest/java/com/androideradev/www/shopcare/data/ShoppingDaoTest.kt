@@ -58,6 +58,7 @@ class ShoppingDaoTest {
         assertThat(shoppingItems).contains(shoppingItem)
     }
 
+    @Test
     fun deleteShoppingItem() = runTest {
         val shoppingItem = ShoppingItem(
             id = 1,
@@ -73,5 +74,24 @@ class ShoppingDaoTest {
         assertThat(shoppingItems).doesNotContain(shoppingItem)
     }
 
+    @Test
+    fun checkItemsTotalPriceSum() = runTest {
+        val shoppingItem1 = ShoppingItem(
+            id = 1, name = "Phone", amount = 1, price = 10f, imageUrl = "www.example.com"
+        )
+        val shoppingItem2 = ShoppingItem(
+            id = 2, name = "Car", amount = 3, price = 5.5f, imageUrl = "www.example.com"
+        )
+        val shoppingItem3 = ShoppingItem(
+            id = 3, name = "Cat", amount = 0, price = 25f, imageUrl = "www.example.com"
+        )
+
+        dao.insertShoppingItem(shoppingItem1)
+        dao.insertShoppingItem(shoppingItem2)
+        dao.insertShoppingItem(shoppingItem3)
+
+        val totalItemPriceSum = dao.getTotalPrice().getOrAwaitValue()
+        assertThat(totalItemPriceSum).isEqualTo(1 * 10f + 3 * 5.5f + 0 * 25f)
+    }
 
 }
