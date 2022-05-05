@@ -13,25 +13,4 @@ import androidx.room.RoomDatabase
 abstract class ShoppingItemDatabase : RoomDatabase() {
 
     abstract fun shoppingDao(): ShoppingDao
-
-    companion object {
-
-        @Volatile
-        private var INSTANCE: ShoppingItemDatabase? = null
-
-        fun getDatabase(context: Context): ShoppingItemDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    ShoppingItemDatabase::class.java,
-                    "shopping_database"
-                ).build()
-
-                INSTANCE = instance
-
-                instance
-            }
-        }
-    }
-
 }
